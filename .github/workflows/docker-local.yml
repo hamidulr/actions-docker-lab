@@ -1,0 +1,23 @@
+name: Build & Deploy on Local Runner
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build -t local-nginx:latest .
+
+      - name: Remove Old Container
+        run: |
+          docker rm -f local-nginx || true
+
+      - name: Run New Container
+        run: docker run -d --name local-nginx -p 8080:80 local-nginx:latest
